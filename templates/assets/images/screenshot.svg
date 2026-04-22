@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none">
+  <rect width="640" height="360" rx="12" fill="#fff8f6"/>
+  <rect x="0" y="0" width="640" height="48" fill="#faf9f5" stroke="#f0eee6"/>
+  <text x="32" y="30" font-family="Georgia, serif" font-size="18" font-style="italic" fill="#231916">YeMA</text>
+  <text x="60" y="140" font-family="Georgia, serif" font-size="48" font-weight="500" fill="#231916">Featured Tales</text>
+  <text x="60" y="175" font-family="sans-serif" font-size="14" fill="#56423c">Discover narratives that bridge the</text>
+  <text x="60" y="195" font-family="sans-serif" font-size="14" fill="#56423c">ancient magic of summer forests.</text>
+  <rect x="400" y="80" width="180" height="200" rx="12" fill="#faf9f5" stroke="#f0eee6"/>
+  <rect x="416" y="96" width="148" height="90" rx="6" fill="#e8e6dc"/>
+  <rect x="416" y="200" width="110" height="14" rx="2" fill="#231916"/>
+  <rect x="416" y="220" width="148" height="8" rx="2" fill="#56423c"/>
+  <rect x="416" y="234" width="130" height="8" rx="2" fill="#56423c"/>
+  <rect x="416" y="258" width="148" height="28" rx="8" fill="#c96442"/>
+</svg>

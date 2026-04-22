@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Prevent FOUC: apply dark class before CSS loads -->
+  <script th:inline="javascript">
+    (function () {
+      var DEFAULT = /*[[${theme.config?.advanced?.default_color_scheme} ?: 'auto']]*/ 'auto';
+      var saved = localStorage.getItem('yema-theme');
+      var scheme = saved || DEFAULT;
+      var shouldDark = scheme === 'dark' ||
+        (scheme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (shouldDark) document.documentElement.classList.add('dark');
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=LXGW+WenKai:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet"
+  />
+
+
+  
+    <title th:text="|标签 - ${site.title}|">Tags</title>
+  
+  <script type="module" crossorigin src="/themes/yema/assets/main-CXfjIY5o.js"></script>
+  <link rel="stylesheet" crossorigin href="/themes/yema/assets/main-qfmRNlaZ.css">
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <header
+  class="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-border"
+  th:with="menu = ${menuFinder.getPrimary()}"
+>
+  <div class="max-w-layout mx-auto px-6 py-4 flex items-center justify-between gap-6">
+
+    <!-- Brand -->
+    <a href="/" class="flex items-center gap-2 flex-shrink-0">
+      <th:block th:if="${not #strings.isEmpty(theme.config?.home?.site_title_image)}">
+        <img
+          th:src="${theme.config.home.site_title_image}"
+          th:alt="${site.title}"
+          class="h-10 w-auto"
+        />
+      </th:block>
+      <span
+        th:unless="${not #strings.isEmpty(theme.config?.home?.site_title_image)}"
+        class="font-serif italic text-2xl text-text tracking-tight"
+        th:text="${#strings.isEmpty(theme.config?.home?.site_title_text) ? site.title : theme.config.home.site_title_text}"
+      ></span>
+    </a>
+
+    <!-- Desktop menu -->
+    <nav
+      th:if="${menu != null}"
+      class="hidden md:flex items-center gap-1 font-serif text-text"
+    >
+      <a
+        th:each="item : ${menu.menuItems}"
+        th:href="@{${item.status.href}}"
+        th:text="${item.status.displayName}"
+        class="text-text-muted hover:text-text hover:bg-surface transition-all duration-200 px-3 py-2 rounded"
+      ></a>
+    </nav>
+
+    <!-- Right actions -->
+    <div class="flex items-center gap-2">
+      <!-- Theme toggle -->
+      <button
+        th:if="${theme.config?.advanced?.enable_color_switch != false}"
+        id="theme-toggle"
+        type="button"
+        aria-label="切换配色"
+        class="w-10 h-10 flex items-center justify-center rounded-full text-text-muted hover:text-text hover:bg-surface transition-colors"
+      >
+        <span class="material-symbols-outlined theme-icon-light text-[20px]">light_mode</span>
+        <span class="material-symbols-outlined theme-icon-dark hidden text-[20px]">dark_mode</span>
+      </button>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        aria-label="菜单"
+        class="md:hidden w-10 h-10 flex items-center justify-center rounded-full text-text-muted hover:text-text hover:bg-surface transition-colors"
+      >
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile drawer -->
+  <nav
+    id="mobile-menu"
+    th:if="${menu != null}"
+    class="md:hidden hidden border-t border-border bg-bg"
+  >
+    <div class="max-w-layout mx-auto px-6 py-3 flex flex-col gap-1 font-serif">
+      <a
+        th:each="item : ${menu.menuItems}"
+        th:href="@{${item.status.href}}"
+        th:text="${item.status.displayName}"
+        class="text-text-muted hover:text-text hover:bg-surface transition-all px-3 py-2 rounded"
+      ></a>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="flex-grow">
+    
+  
+
+  <section class="max-w-layout mx-auto px-6 py-section-v">
+    <header class="text-center mb-16">
+      <h1 class="text-section font-serif text-text">Tags</h1>
+      <p class="text-body text-text-muted mt-4">Every keyword, every thread.</p>
+    </header>
+
+    <div class="flex flex-wrap gap-3 justify-center max-w-3xl mx-auto">
+      <a
+        th:each="tag : ${tags.items}"
+        th:href="@{${tag.status.permalink}}"
+        class="inline-flex items-baseline gap-2 px-4 py-2 bg-surface border border-border rounded-full ring-1 ring-border hover:border-primary hover:text-primary transition-colors"
+      >
+        <span class="text-body font-serif" th:text="|#${tag.spec.displayName}|"></span>
+        <span
+          class="text-overline text-text-muted"
+          th:text="${tag.status.postCount ?: 0}"
+        ></span>
+      </a>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="w-full" style="background: var(--footer-bg); color: var(--footer-text);">
+  <div class="max-w-layout mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
+    <!-- LEFT: Brand + copyright + beian + social -->
+    <div class="flex flex-col gap-6">
+
+      <!-- Brand: image preferred, else text -->
+      <div class="flex flex-col gap-3">
+        <th:block th:if="${not #strings.isEmpty(theme.config?.footer?.brand_image)}">
+          <img
+            th:src="${theme.config.footer.brand_image}"
+            th:alt="${site.title}"
+            th:style="|width: ${theme.config.footer.brand_scale ?: 100}%|"
+            class="max-w-[180px]"
+          />
+        </th:block>
+        <span
+          th:unless="${not #strings.isEmpty(theme.config?.footer?.brand_image)}"
+          class="font-serif italic text-2xl"
+          th:text="${#strings.isEmpty(theme.config?.footer?.brand_text) ? site.title : theme.config.footer.brand_text}"
+        ></span>
+        <p
+          th:if="${not #strings.isEmpty(theme.config?.footer?.slogan)}"
+          th:text="${theme.config.footer.slogan}"
+          class="text-sm opacity-70 font-serif"
+        ></p>
+      </div>
+
+      <!-- Copyright + Beian -->
+      <div class="text-xs space-y-1" style="color: var(--footer-text-muted);">
+        <div
+          th:if="${not #strings.isEmpty(theme.config?.footer?.copyright)}"
+          th:utext="${theme.config.footer.copyright}"
+        ></div>
+
+        <div
+          th:if="${theme.config?.footer?.beian?.show_icp or theme.config?.footer?.beian?.show_gongan}"
+          class="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1"
+        >
+          <a
+            th:if="${theme.config?.footer?.beian?.show_icp and not #strings.isEmpty(theme.config.footer.beian.icp)}"
+            th:href="${theme.config.footer.beian.icp_link ?: '#'}"
+            th:text="${theme.config.footer.beian.icp}"
+            target="_blank"
+            rel="noopener"
+            class="hover:underline"
+          ></a>
+          <a
+            th:if="${theme.config?.footer?.beian?.show_gongan and not #strings.isEmpty(theme.config.footer.beian.gongan)}"
+            th:href="${theme.config.footer.beian.gongan_link ?: '#'}"
+            th:text="${theme.config.footer.beian.gongan}"
+            target="_blank"
+            rel="noopener"
+            class="hover:underline"
+          ></a>
+        </div>
+      </div>
+
+      <!-- Social media -->
+      <ul
+        th:if="${not #lists.isEmpty(theme.config?.footer?.social_media)}"
+        class="flex flex-wrap gap-2"
+      >
+        <li th:each="item : ${theme.config.footer.social_media}">
+          <a
+            th:href="${item.url_type == 'image'} ? |javascript:openSocialImage('${item.url}');| : ${item.url}"
+            th:target="${item.url_type == 'image' ? '_self' : '_blank'}"
+            rel="noreferrer"
+            class="inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/10 transition [&>svg]:size-4"
+            style="color: var(--footer-text-muted);"
+          >
+            <span class="sr-only" th:text="${item.name}"></span>
+            <th:block
+              th:if="${item.iconify != null}"
+              th:utext="${item.iconify.value}"
+            ></th:block>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: Menu groups -->
+    <div
+      th:if="${not #lists.isEmpty(theme.config?.footer?.menu_names)}"
+      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"
+    >
+      <th:block th:each="name : ${theme.config.footer.menu_names}">
+        <div th:with="menu = ${menuFinder.getByName(name)}" th:if="${menu != null}">
+          <p class="font-serif text-base mb-4" th:text="${menu.spec.displayName}"></p>
+          <ul class="space-y-2 text-sm" style="color: var(--footer-text-muted);">
+            <li th:each="item : ${menu.menuItems}">
+              <a
+                th:href="@{${item.status.href}}"
+                th:text="${item.status.displayName}"
+                class="hover:underline transition-opacity"
+              ></a>
+            </li>
+          </ul>
+        </div>
+      </th:block>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function openSocialImage(url) {
+    var modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out';
+    var img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'max-width:90%;max-height:90%;border-radius:12px';
+    modal.appendChild(img);
+    modal.onclick = function () { document.body.removeChild(modal); };
+    document.body.appendChild(modal);
+  }
+</script>
+
+
+  <halo:footer />
+</body>
+</html>
+

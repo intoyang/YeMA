@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Prevent FOUC: apply dark class before CSS loads -->
+  <script th:inline="javascript">
+    (function () {
+      var DEFAULT = /*[[${theme.config?.advanced?.default_color_scheme} ?: 'auto']]*/ 'auto';
+      var saved = localStorage.getItem('yema-theme');
+      var scheme = saved || DEFAULT;
+      var shouldDark = scheme === 'dark' ||
+        (scheme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (shouldDark) document.documentElement.classList.add('dark');
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=LXGW+WenKai:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet"
+  />
+
+
+  
+    <title th:text="${site.title}">YeMA</title>
+  
+  <script type="module" crossorigin src="/themes/yema/assets/index-DiQaTA-o.js"></script>
+  <link rel="modulepreload" crossorigin href="/themes/yema/assets/main-CXfjIY5o.js">
+  <link rel="stylesheet" crossorigin href="/themes/yema/assets/main-qfmRNlaZ.css">
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <header
+  class="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-border"
+  th:with="menu = ${menuFinder.getPrimary()}"
+>
+  <div class="max-w-layout mx-auto px-6 py-4 flex items-center justify-between gap-6">
+
+    <!-- Brand -->
+    <a href="/" class="flex items-center gap-2 flex-shrink-0">
+      <th:block th:if="${not #strings.isEmpty(theme.config?.home?.site_title_image)}">
+        <img
+          th:src="${theme.config.home.site_title_image}"
+          th:alt="${site.title}"
+          class="h-10 w-auto"
+        />
+      </th:block>
+      <span
+        th:unless="${not #strings.isEmpty(theme.config?.home?.site_title_image)}"
+        class="font-serif italic text-2xl text-text tracking-tight"
+        th:text="${#strings.isEmpty(theme.config?.home?.site_title_text) ? site.title : theme.config.home.site_title_text}"
+      ></span>
+    </a>
+
+    <!-- Desktop menu -->
+    <nav
+      th:if="${menu != null}"
+      class="hidden md:flex items-center gap-1 font-serif text-text"
+    >
+      <a
+        th:each="item : ${menu.menuItems}"
+        th:href="@{${item.status.href}}"
+        th:text="${item.status.displayName}"
+        class="text-text-muted hover:text-text hover:bg-surface transition-all duration-200 px-3 py-2 rounded"
+      ></a>
+    </nav>
+
+    <!-- Right actions -->
+    <div class="flex items-center gap-2">
+      <!-- Theme toggle -->
+      <button
+        th:if="${theme.config?.advanced?.enable_color_switch != false}"
+        id="theme-toggle"
+        type="button"
+        aria-label="切换配色"
+        class="w-10 h-10 flex items-center justify-center rounded-full text-text-muted hover:text-text hover:bg-surface transition-colors"
+      >
+        <span class="material-symbols-outlined theme-icon-light text-[20px]">light_mode</span>
+        <span class="material-symbols-outlined theme-icon-dark hidden text-[20px]">dark_mode</span>
+      </button>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        aria-label="菜单"
+        class="md:hidden w-10 h-10 flex items-center justify-center rounded-full text-text-muted hover:text-text hover:bg-surface transition-colors"
+      >
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile drawer -->
+  <nav
+    id="mobile-menu"
+    th:if="${menu != null}"
+    class="md:hidden hidden border-t border-border bg-bg"
+  >
+    <div class="max-w-layout mx-auto px-6 py-3 flex flex-col gap-1 font-serif">
+      <a
+        th:each="item : ${menu.menuItems}"
+        th:href="@{${item.status.href}}"
+        th:text="${item.status.displayName}"
+        class="text-text-muted hover:text-text hover:bg-surface transition-all px-3 py-2 rounded"
+      ></a>
+    </div>
+  </nav>
+</header>
+
+
+  <main class="flex-grow">
+    
+  
+
+  <!-- Featured Tales (stacked carousel) -->
+  <!--
+  Featured carousel — uses theme.config.home.featured_posts (repeater)
+  Each item: { post: "post-name" }
+-->
+<section
+  th:if="${not #lists.isEmpty(theme.config?.home?.featured_posts)}"
+  class="py-section-v px-6 max-w-layout mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+>
+
+  <!-- Left column: title + subtitle + arrow buttons -->
+  <div class="space-y-6 max-w-xl">
+    <!-- Title: image first, else text -->
+    <th:block th:if="${not #strings.isEmpty(theme.config?.home?.site_title_image)}">
+      <img
+        th:src="${theme.config.home.site_title_image}"
+        th:alt="${site.title}"
+        th:style="|width: ${theme.config.home.site_title_scale ?: 100}%|"
+        class="max-w-full h-auto"
+      />
+    </th:block>
+    <h1
+      th:unless="${not #strings.isEmpty(theme.config?.home?.site_title_image)}"
+      class="text-display font-serif text-text"
+      th:text="${#strings.isEmpty(theme.config?.home?.site_title_text) ? site.title : theme.config.home.site_title_text}"
+    ></h1>
+
+    <p
+      th:if="${not #strings.isEmpty(theme.config?.home?.site_subtitle)}"
+      class="text-body-lg text-text-muted"
+      th:text="${theme.config.home.site_subtitle}"
+    ></p>
+
+    <div class="flex items-center gap-4 pt-4">
+      <button
+        type="button"
+        data-featured-prev
+        aria-label="上一个"
+        class="w-12 h-12 rounded-full bg-surface2 text-text hover:bg-border transition-colors ring-1 ring-border flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+      </button>
+      <button
+        type="button"
+        data-featured-next
+        aria-label="下一个"
+        class="w-12 h-12 rounded-full bg-surface2 text-text hover:bg-border transition-colors ring-1 ring-border flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Right column: stacked cards -->
+  <div
+    id="featured-stack"
+    class="relative w-full aspect-[4/5] md:aspect-auto md:h-[600px] max-w-lg mx-auto lg:ml-auto lg:mr-0 select-none"
+  >
+    <!-- Static backdrop layers for visual depth -->
+    <div class="absolute inset-0 bg-surface2 rounded-xl ring-1 ring-border opacity-40 transform translate-x-8 translate-y-8 rotate-3 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-surface rounded-xl ring-1 ring-border opacity-60 transform translate-x-4 translate-y-4 -rotate-2 pointer-events-none"></div>
+
+    <!-- Cards: iterate theme.config.home.featured_posts (repeater items) -->
+    <th:block th:each="item, iterStat : ${theme.config.home.featured_posts}">
+      <th:block th:with="post = ${postFinder.getByName(item.post)}">
+        <div
+          th:if="${post != null}"
+          class="featured-card absolute inset-0 bg-surface rounded-xl ring-1 ring-border p-card-p flex flex-col shadow-ring"
+          th:attr="data-index=${iterStat.index}"
+          th:style="|z-index: ${100 - iterStat.index}|"
+        >
+          <div
+            th:if="${post.spec.cover}"
+            class="w-full h-48 mb-6 rounded-lg overflow-hidden bg-surface2 shrink-0"
+          >
+            <img
+              th:src="${post.spec.cover}"
+              th:alt="${post.spec.title}"
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <h2
+            class="text-h-lg font-serif text-text mb-4 line-clamp-2"
+            th:text="${post.spec.title}"
+          ></h2>
+
+          <p
+            class="text-body-e font-serif text-text-muted flex-grow overflow-hidden line-clamp-4"
+            th:text="${post.status.excerpt}"
+          ></p>
+
+          <div class="pt-6 mt-6 border-t border-border shrink-0">
+            <a
+              th:href="@{${post.status.permalink}}"
+              class="block w-full text-center bg-primary text-white hover:bg-primary-hover transition-colors px-6 py-3 rounded-xl text-label tracking-wide uppercase"
+              th:text="${#strings.isEmpty(theme.config?.home?.featured_read_more_text) ? 'READ MORE' : theme.config.home.featured_read_more_text}"
+            ></a>
+          </div>
+        </div>
+      </th:block>
+    </th:block>
+  </div>
+</section>
+
+
+  <!-- The Library of Echoes (masonry waterfall) -->
+  <section
+    th:if="${theme.config?.home?.waterfall_enabled != false}"
+    th:with="limit = ${theme.config?.home?.waterfall_limit ?: 12}"
+    class="bg-surface2 py-section-v"
+  >
+    <div class="max-w-layout mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2
+          class="text-section font-serif text-text"
+          th:text="${#strings.isEmpty(theme.config?.home?.waterfall_title) ? 'The Library of Echoes' : theme.config.home.waterfall_title}"
+        ></h2>
+        <p
+          th:if="${not #strings.isEmpty(theme.config?.home?.waterfall_subtitle)}"
+          class="text-body text-text-muted mt-4 max-w-2xl mx-auto"
+          th:text="${theme.config.home.waterfall_subtitle}"
+        ></p>
+      </div>
+
+      <!-- CSS columns for masonry -->
+      <div
+        th:with="posts = ${postFinder.list(1, limit)}"
+        class="columns-1 md:columns-2 lg:columns-3 gap-6"
+      >
+        <th:block th:each="post : ${posts.items}">
+          <!--
+  Post card with automatic variant selection.
+  Variants determined by presence of cover and annotation:
+    - dark accent (explicit)  → annotation: theme.run/card-style = "dark"
+    - image+text (default)    → has cover
+    - text-only              → no cover
+  Pure-image variant (no text) is a special case, not auto-selected.
+-->
+<th:block th:with="
+  style = ${post.metadata.annotations != null ? post.metadata.annotations.get('theme.run/card-style') : null},
+  hasCover = ${post.spec.cover != null and not #strings.isEmpty(post.spec.cover)}
+">
+
+  <!-- Dark accent variant -->
+  <article
+    th:if="${style == 'dark'}"
+    class="reveal break-inside-avoid rounded-xl overflow-hidden mb-6 ring-1 ring-border transition-shadow duration-300 hover:shadow-ring"
+    style="background: #2d4c3b;"
+  >
+    <a th:href="@{${post.status.permalink}}" class="block">
+      <div class="p-card-p border-b border-white/10">
+        <span
+          th:if="${not #lists.isEmpty(post.categories)}"
+          class="text-overline tracking-widest uppercase block mb-1 text-green-200"
+          th:text="${post.categories[0].spec.displayName}"
+        ></span>
+        <span
+          class="text-sm text-green-100/70"
+          th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+        ></span>
+      </div>
+      <div class="p-card-p">
+        <h3
+          class="text-h-md mb-3 text-white font-serif line-clamp-3"
+          th:text="${post.spec.title}"
+        ></h3>
+        <p
+          class="text-body-e font-serif text-green-50/90 line-clamp-4"
+          th:text="${post.status.excerpt}"
+        ></p>
+      </div>
+    </a>
+  </article>
+
+  <!-- Image + text variant -->
+  <article
+    th:if="${style != 'dark' and hasCover}"
+    class="reveal break-inside-avoid bg-surface rounded-xl ring-1 ring-border overflow-hidden mb-6 hover:shadow-ring transition-shadow duration-300"
+  >
+    <a th:href="@{${post.status.permalink}}" class="block">
+      <img
+        th:src="${post.spec.cover}"
+        th:alt="${post.spec.title}"
+        loading="lazy"
+        class="w-full aspect-[4/3] object-cover"
+      />
+      <div class="p-card-p">
+        <span
+          th:if="${not #lists.isEmpty(post.categories)}"
+          class="text-overline tracking-widest uppercase text-primary mb-2 block"
+          th:text="${post.categories[0].spec.displayName}"
+        ></span>
+        <h3
+          class="text-h-md mb-3 text-text font-serif line-clamp-3"
+          th:text="${post.spec.title}"
+        ></h3>
+        <p
+          class="text-body-e font-serif text-text-muted line-clamp-3"
+          th:text="${post.status.excerpt}"
+        ></p>
+      </div>
+    </a>
+  </article>
+
+  <!-- Text-only variant -->
+  <article
+    th:if="${style != 'dark' and !hasCover}"
+    class="reveal break-inside-avoid bg-surface rounded-xl ring-1 ring-border overflow-hidden mb-6 hover:shadow-ring transition-shadow duration-300"
+  >
+    <a th:href="@{${post.status.permalink}}" class="block p-card-p">
+      <span
+        th:if="${not #lists.isEmpty(post.categories)}"
+        class="text-overline tracking-widest uppercase text-primary mb-2 block"
+        th:text="${post.categories[0].spec.displayName}"
+      ></span>
+      <h3
+        class="text-h-md mb-3 text-text font-serif line-clamp-3"
+        th:text="${post.spec.title}"
+      ></h3>
+      <p
+        class="text-body-e font-serif text-text-muted line-clamp-4"
+        th:text="${post.status.excerpt}"
+      ></p>
+    </a>
+  </article>
+
+</th:block>
+
+        </th:block>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand quote -->
+  <section
+  th:if="${theme.config?.home?.quote_enabled and not #strings.isEmpty(theme.config.home.quote_text)}"
+  class="py-24 px-6 max-w-4xl mx-auto text-center"
+>
+  <div class="font-serif text-8xl leading-none opacity-80 mb-6" style="color: var(--primary);">"</div>
+  <h2
+    class="text-h-lg md:text-section font-serif italic text-text-muted"
+    th:text="${theme.config.home.quote_text}"
+  ></h2>
+</section>
+
+
+  </main>
+
+  <footer class="w-full" style="background: var(--footer-bg); color: var(--footer-text);">
+  <div class="max-w-layout mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
+    <!-- LEFT: Brand + copyright + beian + social -->
+    <div class="flex flex-col gap-6">
+
+      <!-- Brand: image preferred, else text -->
+      <div class="flex flex-col gap-3">
+        <th:block th:if="${not #strings.isEmpty(theme.config?.footer?.brand_image)}">
+          <img
+            th:src="${theme.config.footer.brand_image}"
+            th:alt="${site.title}"
+            th:style="|width: ${theme.config.footer.brand_scale ?: 100}%|"
+            class="max-w-[180px]"
+          />
+        </th:block>
+        <span
+          th:unless="${not #strings.isEmpty(theme.config?.footer?.brand_image)}"
+          class="font-serif italic text-2xl"
+          th:text="${#strings.isEmpty(theme.config?.footer?.brand_text) ? site.title : theme.config.footer.brand_text}"
+        ></span>
+        <p
+          th:if="${not #strings.isEmpty(theme.config?.footer?.slogan)}"
+          th:text="${theme.config.footer.slogan}"
+          class="text-sm opacity-70 font-serif"
+        ></p>
+      </div>
+
+      <!-- Copyright + Beian -->
+      <div class="text-xs space-y-1" style="color: var(--footer-text-muted);">
+        <div
+          th:if="${not #strings.isEmpty(theme.config?.footer?.copyright)}"
+          th:utext="${theme.config.footer.copyright}"
+        ></div>
+
+        <div
+          th:if="${theme.config?.footer?.beian?.show_icp or theme.config?.footer?.beian?.show_gongan}"
+          class="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1"
+        >
+          <a
+            th:if="${theme.config?.footer?.beian?.show_icp and not #strings.isEmpty(theme.config.footer.beian.icp)}"
+            th:href="${theme.config.footer.beian.icp_link ?: '#'}"
+            th:text="${theme.config.footer.beian.icp}"
+            target="_blank"
+            rel="noopener"
+            class="hover:underline"
+          ></a>
+          <a
+            th:if="${theme.config?.footer?.beian?.show_gongan and not #strings.isEmpty(theme.config.footer.beian.gongan)}"
+            th:href="${theme.config.footer.beian.gongan_link ?: '#'}"
+            th:text="${theme.config.footer.beian.gongan}"
+            target="_blank"
+            rel="noopener"
+            class="hover:underline"
+          ></a>
+        </div>
+      </div>
+
+      <!-- Social media -->
+      <ul
+        th:if="${not #lists.isEmpty(theme.config?.footer?.social_media)}"
+        class="flex flex-wrap gap-2"
+      >
+        <li th:each="item : ${theme.config.footer.social_media}">
+          <a
+            th:href="${item.url_type == 'image'} ? |javascript:openSocialImage('${item.url}');| : ${item.url}"
+            th:target="${item.url_type == 'image' ? '_self' : '_blank'}"
+            rel="noreferrer"
+            class="inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/10 transition [&>svg]:size-4"
+            style="color: var(--footer-text-muted);"
+          >
+            <span class="sr-only" th:text="${item.name}"></span>
+            <th:block
+              th:if="${item.iconify != null}"
+              th:utext="${item.iconify.value}"
+            ></th:block>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: Menu groups -->
+    <div
+      th:if="${not #lists.isEmpty(theme.config?.footer?.menu_names)}"
+      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"
+    >
+      <th:block th:each="name : ${theme.config.footer.menu_names}">
+        <div th:with="menu = ${menuFinder.getByName(name)}" th:if="${menu != null}">
+          <p class="font-serif text-base mb-4" th:text="${menu.spec.displayName}"></p>
+          <ul class="space-y-2 text-sm" style="color: var(--footer-text-muted);">
+            <li th:each="item : ${menu.menuItems}">
+              <a
+                th:href="@{${item.status.href}}"
+                th:text="${item.status.displayName}"
+                class="hover:underline transition-opacity"
+              ></a>
+            </li>
+          </ul>
+        </div>
+      </th:block>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function openSocialImage(url) {
+    var modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out';
+    var img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'max-width:90%;max-height:90%;border-radius:12px';
+    modal.appendChild(img);
+    modal.onclick = function () { document.body.removeChild(modal); };
+    document.body.appendChild(modal);
+  }
+</script>
+
+
+  <halo:footer />
+</body>
+</html>
+

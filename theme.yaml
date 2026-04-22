@@ -1,1 +1,21 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: yema
+spec:
+  displayName: "YeMA"
+  author:
+    name: kaikai
+    website: https://intoyang.fun
+  description: "要野。"
+  logo: "/themes/yema/assets/images/icon.svg"
+  homepage: "https://intoyang.fun"
+  repo: ""
+  issues: ""
+  settingName: "yema-setting"
+  configMapName: "yema-configmap"
+  version: 1.0.0
+  requires: ">=2.20.0"
+  license:
+    - name: "GPL 3.0"
 

@@ -1,0 +1,61 @@
+<!--
+  Prev/Next navigation (uses postFinder.cursor for adjacent posts).
+  Accepts: ${post.metadata.name}
+-->
+<th:block th:with="cursor = ${postFinder.cursor(post.metadata.name)}">
+<section
+  th:if="${cursor != null and (cursor.hasPrevious() or cursor.hasNext())}"
+  class="border-t border-border py-section-v"
+>
+  <div class="max-w-4xl mx-auto px-6">
+    <h2 class="text-h-lg font-serif text-text text-center mb-12">Continue the Journey</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Previous -->
+      <a
+        th:if="${cursor.hasPrevious()}"
+        th:href="@{${cursor.previous.status.permalink}}"
+        class="group block bg-surface rounded-xl p-card-p ring-1 ring-border transition-all duration-300 hover:shadow-ring hover:ring-primary relative overflow-hidden"
+      >
+        <div class="absolute top-0 left-0 w-1 h-full bg-border group-hover:bg-primary transition-colors"></div>
+        <span class="text-overline tracking-widest uppercase text-text-muted mb-2 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[14px]">arrow_left_alt</span>
+          Previous Story
+        </span>
+        <h3
+          class="text-2xl font-serif text-text mb-3 group-hover:text-primary transition-colors line-clamp-2"
+          th:text="${cursor.previous.spec.title}"
+        ></h3>
+        <p
+          th:if="${not #strings.isEmpty(cursor.previous.status.excerpt)}"
+          class="text-body text-text-muted line-clamp-2 opacity-80"
+          th:text="${cursor.previous.status.excerpt}"
+        ></p>
+      </a>
+      <div th:unless="${cursor.hasPrevious()}" class="hidden md:block"></div>
+
+      <!-- Next -->
+      <a
+        th:if="${cursor.hasNext()}"
+        th:href="@{${cursor.next.status.permalink}}"
+        class="group block bg-surface rounded-xl p-card-p ring-1 ring-border transition-all duration-300 hover:shadow-ring hover:ring-tertiary relative overflow-hidden text-right"
+      >
+        <div class="absolute top-0 right-0 w-1 h-full bg-border group-hover:bg-tertiary transition-colors"></div>
+        <span class="text-overline tracking-widest uppercase text-text-muted mb-2 flex items-center justify-end gap-2">
+          Next Story
+          <span class="material-symbols-outlined text-[14px]">arrow_right_alt</span>
+        </span>
+        <h3
+          class="text-2xl font-serif text-text mb-3 group-hover:text-tertiary transition-colors line-clamp-2"
+          th:text="${cursor.next.spec.title}"
+        ></h3>
+        <p
+          th:if="${not #strings.isEmpty(cursor.next.status.excerpt)}"
+          class="text-body text-text-muted line-clamp-2 opacity-80"
+          th:text="${cursor.next.status.excerpt}"
+        ></p>
+      </a>
+    </div>
+  </div>
+</section>
+</th:block>

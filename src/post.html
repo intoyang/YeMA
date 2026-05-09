@@ -1,0 +1,111 @@
+<include src="layout.html">
+  <template name="head">
+    <title th:text="|${post.spec.title} - ${site.title}|">Post</title>
+  </template>
+
+  <article class="w-full">
+    <!-- Immersive header with cover -->
+    <header
+      th:if="${theme.config?.post?.show_cover != false and not #strings.isEmpty(post.spec.cover)}"
+      class="w-full relative overflow-hidden flex items-end justify-center"
+      style="min-height: 60vh; max-height: 80vh;"
+    >
+      <img
+        th:src="${post.spec.cover}"
+        th:alt="${post.spec.title}"
+        class="absolute inset-0 w-full h-full object-cover"
+      />
+      <!-- Gradient overlay blending into surface -->
+      <div
+        class="absolute inset-0"
+        style="background: linear-gradient(to bottom, transparent 0%, transparent 40%, var(--bg) 100%);"
+      ></div>
+      <div class="relative z-10 max-w-4xl mx-auto px-6 pb-16 text-center">
+        <span
+          th:if="${not #lists.isEmpty(post.categories)}"
+          class="text-overline tracking-widest uppercase text-primary block mb-4"
+          th:text="${post.categories[0].spec.displayName}"
+        ></span>
+        <h1
+          class="text-display font-serif text-text mb-6 leading-tight"
+          th:text="${post.spec.title}"
+        ></h1>
+        <p class="text-body-e font-serif italic text-text-muted">
+          <th:block th:if="${post.contributors != null and not #lists.isEmpty(post.contributors)}">
+            <span>By </span><span th:text="${post.contributors[0].displayName}"></span>
+          </th:block>
+          <th:block th:if="${post.contributors != null and not #lists.isEmpty(post.contributors)}">
+            <span> — </span>
+          </th:block>
+          <span th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"></span>
+          <th:block th:if="${theme.config?.post?.show_visit_count != false and post.stats != null}">
+            <span th:text="|· ${post.stats.visit ?: 0} views|"></span>
+          </th:block>
+        </p>
+      </div>
+    </header>
+
+    <!-- Simple header without cover -->
+    <header
+      th:unless="${theme.config?.post?.show_cover != false and not #strings.isEmpty(post.spec.cover)}"
+      class="max-w-reading mx-auto px-6 pt-section-v pb-12 text-center"
+    >
+      <span
+        th:if="${not #lists.isEmpty(post.categories)}"
+        class="text-overline tracking-widest uppercase text-primary block mb-4"
+        th:text="${post.categories[0].spec.displayName}"
+      ></span>
+      <h1
+        class="text-h-lg md:text-display font-serif text-text mb-6 leading-tight"
+        th:text="${post.spec.title}"
+      ></h1>
+      <p
+        class="text-body-e font-serif italic text-text-muted"
+        th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+      ></p>
+    </header>
+
+    <!-- Body -->
+    <div class="w-full bg-bg">
+      <div class="max-w-reading mx-auto px-6 py-16">
+        <div
+          class="post-content space-y-6"
+          th:classappend="${theme.config?.post?.drop_cap_enabled != false ? 'has-dropcap' : ''}"
+          th:utext="${post.content.content}"
+        ></div>
+
+        <!-- Tags -->
+        <div
+          th:if="${not #lists.isEmpty(post.tags)}"
+          class="mt-16 pt-8 border-t border-border flex flex-wrap gap-2"
+        >
+          <a
+            th:each="tag : ${post.tags}"
+            th:href="@{${tag.status.permalink}}"
+            th:text="|#${tag.spec.displayName}|"
+            class="px-3 py-1 text-label text-text-muted border border-border rounded-full hover:border-primary hover:text-primary transition-colors"
+          ></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Prev/Next navigation -->
+  <th:block th:if="${theme.config?.post?.show_prev_next != false}">
+    <include src="post-nav.html" />
+  </th:block>
+
+  <!-- Comments -->
+  <th:block th:if="${haloCommentEnabled}">
+    <section class="border-t border-border py-16">
+      <div class="max-w-reading mx-auto px-6 comment-wrapper">
+        <h2 class="text-h-md font-serif text-text mb-8">评论</h2>
+        <halo:comment
+          group="content.halo.run"
+          kind="Post"
+          th:attr="name=${post.metadata.name}"
+        />
+      </div>
+    </section>
+  </th:block>
+</include>

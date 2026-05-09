@@ -1,0 +1,26 @@
+<include src="layout.html">
+  <template name="head">
+    <title th:text="|标签 - ${site.title}|">Tags</title>
+  </template>
+
+  <section class="max-w-layout mx-auto px-6 py-section-v">
+    <header class="text-center mb-16">
+      <h1 class="text-section font-serif text-text">标签</h1>
+      <p class="text-body text-text-muted mt-4">所有标签，一览无余。</p>
+    </header>
+
+    <div class="flex flex-wrap gap-3 justify-center max-w-3xl mx-auto">
+      <a
+        th:each="tag : ${tags.items}"
+        th:href="@{${tag.status.permalink}}"
+        class="inline-flex items-baseline gap-2 px-4 py-2 bg-surface border border-border rounded-full ring-1 ring-border hover:border-primary hover:text-primary transition-colors"
+      >
+        <span class="text-body font-serif" th:text="|#${tag.spec.displayName}|"></span>
+        <span
+          class="text-overline text-text-muted"
+          th:text="${tag.status.postCount ?: 0}"
+        ></span>
+      </a>
+    </div>
+  </section>
+</include>

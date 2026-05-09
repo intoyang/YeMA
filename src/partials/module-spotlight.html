@@ -1,0 +1,149 @@
+<!--
+  Spotlight module.
+  layout=left-right (default): description left, card stack right, prev/next below description.
+  layout=center: description centered top, card stack below with prev/next on sides.
+  Card height fixed at 500px. With cover: 3-line excerpt. Without cover: 9-line excerpt. Both text-justify.
+-->
+<th:block th:if="${not #lists.isEmpty(options.posts)}" th:with="isCenter = ${options.layout == 'center'}">
+
+  <!-- ===== LEFT-RIGHT LAYOUT ===== -->
+  <section
+    th:unless="${isCenter}"
+    class="py-section-v px-6 max-w-layout mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+  >
+    <!-- Left: description -->
+    <div class="space-y-6 max-w-xl">
+      <th:block th:if="${not #strings.isEmpty(options.image)}">
+        <img
+          th:src="${options.image}"
+          th:alt="${site.title}"
+          th:style="|width: ${options.image_scale ?: 100}%|"
+          class="max-w-full h-auto"
+        />
+      </th:block>
+      <h1
+        th:unless="${not #strings.isEmpty(options.image)}"
+        class="text-display font-serif text-text"
+        th:text="${#strings.isEmpty(options.title) ? site.title : options.title}"
+      ></h1>
+      <p
+        th:if="${not #strings.isEmpty(options.subtitle)}"
+        class="text-body-lg text-text-muted"
+        th:text="${options.subtitle}"
+      ></p>
+      <div class="flex items-center gap-4 pt-4">
+        <button type="button" data-featured-prev aria-label="上一个"
+          class="w-12 h-12 rounded-full bg-surface2 text-text hover:bg-border transition-colors ring-1 ring-border flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        </button>
+        <button type="button" data-featured-next aria-label="下一个"
+          class="w-12 h-12 rounded-full bg-surface2 text-text hover:bg-border transition-colors ring-1 ring-border flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: card stack -->
+    <div id="featured-stack"
+      class="relative w-full h-[500px] max-w-lg mx-auto lg:ml-auto lg:mr-0 select-none isolate">
+      <div class="absolute inset-0 bg-surface2 rounded-xl ring-1 ring-border opacity-40 transform translate-x-8 translate-y-8 rotate-3 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-surface rounded-xl ring-1 ring-border opacity-60 transform translate-x-4 translate-y-4 -rotate-2 pointer-events-none"></div>
+      <th:block th:each="item, iterStat : ${options.posts}">
+        <th:block th:with="post = ${postFinder.getByName(item.post)}">
+          <div th:if="${post != null}"
+            class="featured-card absolute inset-0 bg-surface rounded-xl ring-1 ring-border p-card-p flex flex-col shadow-ring"
+            th:attr="data-index=${iterStat.index}"
+            th:style="|z-index: ${100 - iterStat.index}|">
+            <div th:if="${not #strings.isEmpty(post.spec.cover)}"
+              class="w-full aspect-video max-h-44 mb-6 rounded-lg overflow-hidden bg-surface2 shrink-0">
+              <img th:src="${post.spec.cover}" th:alt="${post.spec.title}" class="w-full h-full object-cover" />
+            </div>
+            <h2 class="text-h-lg font-serif text-text mb-3 shrink-0"
+              th:classappend="${not #strings.isEmpty(post.spec.cover)} ? 'line-clamp-1' : 'line-clamp-2'"
+              th:text="${post.spec.title}"></h2>
+            <p class="text-body-e font-serif text-text-muted text-justify flex-grow overflow-hidden"
+              th:classappend="${not #strings.isEmpty(post.spec.cover)} ? 'line-clamp-3' : 'line-clamp-[9]'"
+              th:text="${post.status.excerpt}"></p>
+            <div class="pt-5 mt-5 border-t border-border shrink-0">
+              <a th:href="@{${post.status.permalink}}"
+                class="block w-full text-center bg-primary text-white hover:bg-primary-hover transition-colors px-6 py-3 rounded-xl text-label tracking-wide uppercase"
+                th:text="${#strings.isEmpty(options.button_text) ? '继续阅读' : options.button_text}"></a>
+            </div>
+          </div>
+        </th:block>
+      </th:block>
+    </div>
+  </section>
+
+  <!-- ===== CENTER LAYOUT ===== -->
+  <section
+    th:if="${isCenter}"
+    class="py-section-v px-6 max-w-layout mx-auto flex flex-col items-center gap-12"
+  >
+    <!-- Top: description centered -->
+    <div class="text-center space-y-4 max-w-2xl">
+      <th:block th:if="${not #strings.isEmpty(options.image)}">
+        <img
+          th:src="${options.image}"
+          th:alt="${site.title}"
+          th:style="|width: ${options.image_scale ?: 100}%|"
+          class="max-w-full h-auto mx-auto"
+        />
+      </th:block>
+      <h1
+        th:unless="${not #strings.isEmpty(options.image)}"
+        class="text-display font-serif text-text"
+        th:text="${#strings.isEmpty(options.title) ? site.title : options.title}"
+      ></h1>
+      <p
+        th:if="${not #strings.isEmpty(options.subtitle)}"
+        class="text-body-lg text-text-muted"
+        th:text="${options.subtitle}"
+      ></p>
+    </div>
+
+    <!-- Bottom: prev | card stack | next -->
+    <div class="flex items-center w-full max-w-4xl">
+      <button type="button" data-featured-prev aria-label="上一个"
+        class="flex-none w-12 h-12 rounded-full bg-surface2 text-text hover:bg-border transition-colors ring-1 ring-border flex items-center justify-center mx-[60px]">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+      </button>
+
+      <div id="featured-stack"
+        class="relative w-full h-[500px] select-none isolate">
+        <div class="absolute inset-0 bg-surface2 rounded-xl ring-1 ring-border opacity-40 transform translate-x-6 translate-y-6 rotate-3 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-surface rounded-xl ring-1 ring-border opacity-60 transform translate-x-3 translate-y-3 -rotate-2 pointer-events-none"></div>
+        <th:block th:each="item, iterStat : ${options.posts}">
+          <th:block th:with="post = ${postFinder.getByName(item.post)}">
+            <div th:if="${post != null}"
+              class="featured-card absolute inset-0 bg-surface rounded-xl ring-1 ring-border p-card-p flex flex-col shadow-ring"
+              th:attr="data-index=${iterStat.index}"
+              th:style="|z-index: ${100 - iterStat.index}|">
+              <div th:if="${not #strings.isEmpty(post.spec.cover)}"
+                class="w-full aspect-video max-h-44 mb-6 rounded-lg overflow-hidden bg-surface2 shrink-0">
+                <img th:src="${post.spec.cover}" th:alt="${post.spec.title}" class="w-full h-full object-cover" />
+              </div>
+              <h2 class="text-h-lg font-serif text-text mb-3 shrink-0"
+              th:classappend="${not #strings.isEmpty(post.spec.cover)} ? 'line-clamp-1' : 'line-clamp-2'"
+              th:text="${post.spec.title}"></h2>
+              <p class="text-body-e font-serif text-text-muted text-justify flex-grow overflow-hidden"
+                th:classappend="${not #strings.isEmpty(post.spec.cover)} ? 'line-clamp-3' : 'line-clamp-[9]'"
+                th:text="${post.status.excerpt}"></p>
+              <div class="pt-5 mt-5 border-t border-border shrink-0">
+                <a th:href="@{${post.status.permalink}}"
+                  class="block w-full text-center bg-primary text-white hover:bg-primary-hover transition-colors px-6 py-3 rounded-xl text-label tracking-wide uppercase"
+                  th:text="${#strings.isEmpty(options.button_text) ? '继续阅读' : options.button_text}"></a>
+              </div>
+            </div>
+          </th:block>
+        </th:block>
+      </div>
+
+      <button type="button" data-featured-next aria-label="下一个"
+        class="flex-none w-12 h-12 rounded-full bg-surface2 text-text hover:bg-border transition-colors ring-1 ring-border flex items-center justify-center mx-[60px]">
+        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+      </button>
+    </div>
+  </section>
+
+</th:block>

@@ -1,0 +1,256 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Color tokens — light / dark switch via .dark on <html>
+   ============================================================ */
+:root {
+  --bg: #fff8f6;
+  --surface: #faf9f5;
+  --surface2: #f5f4ed;
+  --text: #231916;
+  --text-muted: #56423c;
+  --border: #f0eee6;
+  --primary: #c96442;
+  --primary-hover: #9a4021;
+  --tertiary: #006768;
+  --neutral: #87867f;
+
+  /* Footer 保持深色 */
+  --footer-bg: #1a1a1a;
+  --footer-text: #fafaf9;
+  --footer-text-muted: #a1a1aa;
+  --footer-border: #27272a;
+}
+
+.dark {
+  --bg: #141413;
+  --surface: #30302e;
+  --surface2: #1c1d1d;
+  --text: #faf9f5;
+  --text-muted: #b0aea5;
+  --border: #30302e;
+  --primary: #c96442;
+  --primary-hover: #d97757;
+  --tertiary: #009091;
+  --neutral: #827470;
+
+  --footer-bg: #0a0a0a;
+  --footer-text: #fafaf9;
+  --footer-text-muted: #71717a;
+  --footer-border: #18181b;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+html {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-bg text-text antialiased;
+  font-family: theme("fontFamily.sans");
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  @apply bg-primary text-white;
+}
+
+/* ============================================================
+   Material symbols (icon font) reset
+   ============================================================ */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  user-select: none;
+}
+
+/* ============================================================
+   Featured carousel (home)
+   ============================================================ */
+.featured-card {
+  transition: transform 0.45s cubic-bezier(0.32, 0.94, 0.6, 1),
+    opacity 0.45s ease;
+  touch-action: pan-y;
+  will-change: transform;
+}
+
+.featured-card.is-dragging {
+  transition: none;
+  cursor: grabbing;
+}
+
+/* ============================================================
+   Post content (article body)
+   ============================================================ */
+.post-content {
+  @apply text-text;
+  font-family: theme("fontFamily.serif");
+}
+
+.post-content > * + * {
+  @apply mt-6;
+}
+
+.post-content p {
+  @apply text-body-e leading-[1.75];
+}
+
+.post-content h2 {
+  @apply text-h-md mt-14 mb-4 font-medium;
+}
+
+.post-content h3 {
+  @apply text-2xl mt-10 mb-3 font-medium;
+}
+
+.post-content h4 {
+  @apply text-xl mt-8 mb-2 font-medium;
+}
+
+.post-content blockquote {
+  @apply border-l-2 border-primary pl-6 my-12 py-2 italic;
+  color: var(--primary);
+}
+
+.post-content blockquote p {
+  @apply text-h-md leading-tight;
+}
+
+.post-content img {
+  @apply rounded-xl mx-auto;
+}
+
+.post-content a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--primary) 30%, transparent);
+  text-underline-offset: 2px;
+}
+
+.post-content a:hover {
+  text-decoration-color: var(--primary);
+}
+
+.post-content code {
+  @apply px-1.5 py-0.5 rounded text-sm font-mono;
+  background: var(--surface);
+  color: var(--primary);
+}
+
+.post-content pre {
+  @apply my-8 p-6 rounded-xl overflow-x-auto;
+  background: var(--surface2);
+}
+
+.post-content pre code {
+  @apply p-0 bg-transparent text-text;
+}
+
+.post-content ul,
+.post-content ol {
+  @apply pl-6 space-y-2;
+}
+
+.post-content ul {
+  @apply list-disc;
+}
+
+.post-content ol {
+  @apply list-decimal;
+}
+
+.post-content hr {
+  @apply my-12 border-border;
+}
+
+.post-content table {
+  @apply w-full border-collapse my-8;
+}
+
+.post-content th,
+.post-content td {
+  @apply p-3 border border-border text-left;
+}
+
+.post-content th {
+  background: var(--surface);
+  @apply font-medium;
+}
+
+/* Drop cap */
+.post-content.has-dropcap > p:first-of-type::first-letter {
+  font-family: theme("fontFamily.serif");
+  @apply text-6xl float-left mr-3 mt-[-4px] leading-none;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* ============================================================
+   Text-only post card color variants (waterfall)
+   3 colors cycle: 霜月(0) 赤陶(1) 森绿(2)
+   Two-tone: card-header (deeper) / card-body (lighter)
+   ============================================================ */
+
+/* 霜月 — article = body bg, header floats above */
+.card-color-0              { background: var(--surface); }
+.card-color-0 .card-header { background: var(--surface2); }
+.card-color-0 .card-text-overline { color: var(--primary); }
+.card-color-0 .card-text-title    { color: var(--text); }
+.card-color-0 .card-text-excerpt  { color: var(--text-muted); }
+
+/* 赤陶 */
+.card-color-1              { background: #fff1ed; }
+.card-color-1 .card-header { background: #f7e4df; }
+.card-color-1 .card-text-overline { color: #7e2c0e; }
+.card-color-1 .card-text-title    { color: #231916; }
+.card-color-1 .card-text-excerpt  { color: #7a4a3a; }
+
+/* 森绿 */
+.card-color-2              { background: #f0f5e8; }
+.card-color-2 .card-header { background: #dce8cc; }
+.card-color-2 .card-text-overline { color: #2d5c1e; }
+.card-color-2 .card-text-title    { color: #231916; }
+.card-color-2 .card-text-excerpt  { color: #4a6835; }
+
+/* Dark mode */
+.dark .card-color-0              { background: var(--surface); }
+.dark .card-color-0 .card-header { background: var(--surface2); }
+
+.dark .card-color-1              { background: #5a2a18; }
+.dark .card-color-1 .card-header { background: #3d1d10; }
+.dark .card-color-1 .card-text-overline { color: #f5b89c; }
+.dark .card-color-1 .card-text-title    { color: #d4d0c8; }
+.dark .card-color-1 .card-text-excerpt  { color: #b0aea5; }
+
+.dark .card-color-2              { background: #2d4d1e; }
+.dark .card-color-2 .card-header { background: #1a3010; }
+.dark .card-color-2 .card-text-overline { color: #a8cc88; }
+.dark .card-color-2 .card-text-title    { color: #d4d0c8; }
+.dark .card-color-2 .card-text-excerpt  { color: #b0aea5; }
+
+/* ============================================================
+   Scroll reveal
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.32, 0.94, 0.6, 1),
+    transform 0.6s cubic-bezier(0.32, 0.94, 0.6, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Comment plugin dark mode adaptation
+   ============================================================ */
+.dark .comment-wrapper :is(input, textarea) {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}

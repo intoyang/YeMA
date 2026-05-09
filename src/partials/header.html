@@ -1,0 +1,74 @@
+<header
+  class="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-border"
+  th:with="menu = ${menuFinder.getPrimary()}"
+>
+  <div class="max-w-layout mx-auto px-6 py-4 flex items-center justify-between gap-6">
+
+    <!-- Brand -->
+    <a href="/" class="flex items-center gap-2 flex-shrink-0"
+       th:with="logoType = ${theme.config?.header?.logo_type ?: 'text'}">
+      <img
+        th:if="${logoType == 'image' and not #strings.isEmpty(theme.config?.header?.logo_image)}"
+        th:src="${theme.config.header.logo_image}"
+        th:alt="${site.title}"
+        th:style="|height: ${theme.config?.header?.logo_height ?: 40}px; width: auto|"
+      />
+      <span
+        th:unless="${logoType == 'image' and not #strings.isEmpty(theme.config?.header?.logo_image)}"
+        class="font-serif italic text-2xl text-text tracking-tight"
+        th:text="${#strings.isEmpty(theme.config?.header?.logo_text) ? site.title : theme.config.header.logo_text}"
+      ></span>
+    </a>
+
+    <!-- Desktop menu -->
+    <nav
+      th:if="${menu != null}"
+      class="hidden md:flex items-center gap-1 font-serif text-text"
+    >
+      <a
+        th:each="item : ${menu.menuItems}"
+        th:href="@{${item.status.href}}"
+        th:text="${item.status.displayName}"
+        class="text-text-muted hover:text-primary hover:bg-surface2 transition-all duration-200 px-3 py-2 rounded"
+      ></a>
+    </nav>
+
+    <!-- Right actions -->
+    <div class="flex items-center gap-2">
+      <button
+        th:if="${theme.config?.advanced?.enable_color_switch != false}"
+        id="theme-toggle"
+        type="button"
+        aria-label="切换配色"
+        class="w-10 h-10 flex items-center justify-center rounded-full text-text-muted hover:text-text hover:bg-surface transition-colors"
+      >
+        <span class="material-symbols-outlined theme-icon-light text-[20px]">light_mode</span>
+        <span class="material-symbols-outlined theme-icon-dark hidden text-[20px]">dark_mode</span>
+      </button>
+
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        aria-label="菜单"
+        class="md:hidden w-10 h-10 flex items-center justify-center rounded-full text-text-muted hover:text-text hover:bg-surface transition-colors"
+      >
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-menu"
+    th:if="${menu != null}"
+    class="md:hidden hidden border-t border-border bg-bg"
+  >
+    <div class="max-w-layout mx-auto px-6 py-3 flex flex-col gap-1 font-serif">
+      <a
+        th:each="item : ${menu.menuItems}"
+        th:href="@{${item.status.href}}"
+        th:text="${item.status.displayName}"
+        class="text-text-muted hover:text-primary hover:bg-surface2 transition-all px-3 py-2 rounded"
+      ></a>
+    </div>
+  </nav>
+</header>

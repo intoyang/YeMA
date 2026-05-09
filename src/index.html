@@ -1,0 +1,23 @@
+<include src="layout.html">
+  <template name="head">
+    <title th:text="${site.title}">YeMA</title>
+    <script type="module" src="./js/index.ts"></script>
+  </template>
+
+  <!-- Iterate home modules from theme.config.home.modules -->
+  <th:block th:each="module : ${theme.config?.home?.modules}" th:with="options = ${module.options}">
+
+    <th:block th:if="${module.type == 'featured'}">
+      <include src="module-spotlight.html" />
+    </th:block>
+
+    <th:block th:if="${module.type == 'waterfall'}">
+      <include src="module-waterfall.html" />
+    </th:block>
+
+    <th:block th:if="${module.type == 'quote'}">
+      <include src="module-quote.html" />
+    </th:block>
+
+  </th:block>
+</include>

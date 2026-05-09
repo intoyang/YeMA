@@ -1,0 +1,35 @@
+<include src="layout.html">
+  <template name="head">
+    <title th:text="|${tag.spec.displayName} - ${site.title}|">Tag</title>
+  </template>
+
+  <section class="max-w-layout mx-auto px-6 py-section-v">
+    <header class="text-center mb-16">
+      <span class="text-overline tracking-widest uppercase text-primary block mb-4">Tag</span>
+      <h1 class="text-section font-serif text-text" th:text="|#${tag.spec.displayName}|"></h1>
+    </header>
+
+    <div class="columns-1 md:columns-2 lg:columns-3 gap-6">
+      <th:block th:each="post, iterStat : ${posts.items}" th:with="cardIndex = ${iterStat.index}">
+        <include src="post-card.html" />
+      </th:block>
+    </div>
+
+    <nav
+      th:if="${posts.hasPrevious() or posts.hasNext()}"
+      class="flex items-center justify-center gap-4 mt-16"
+    >
+      <a
+        th:if="${posts.hasPrevious()}"
+        th:href="@{${posts.prevUrl}}"
+        class="px-5 py-2.5 border border-border rounded-xl text-text hover:bg-surface transition"
+      >← Previous</a>
+      <span class="text-text-muted text-sm" th:text="|${posts.page} / ${posts.totalPages}|"></span>
+      <a
+        th:if="${posts.hasNext()}"
+        th:href="@{${posts.nextUrl}}"
+        class="px-5 py-2.5 border border-border rounded-xl text-text hover:bg-surface transition"
+      >Next →</a>
+    </nav>
+  </section>
+</include>

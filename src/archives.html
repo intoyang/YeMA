@@ -1,0 +1,83 @@
+<include src="layout.html">
+  <template name="head">
+    <title th:text="|归档 - ${site.title}|">Archives</title>
+  </template>
+
+  <section class="max-w-4xl mx-auto px-6 py-section-v">
+    <!-- Page header -->
+    <header class="text-center mb-20">
+      <h1
+        class="text-section font-serif text-text"
+        th:text="${#strings.isEmpty(theme.config?.archives?.title) ? 'Archives' : theme.config.archives.title}"
+      ></h1>
+      <p
+        class="text-body text-text-muted mt-4"
+        th:text="${#strings.isEmpty(theme.config?.archives?.subtitle) ? 'A timeline of every tale, gathered by year.' : theme.config.archives.subtitle}"
+      ></p>
+    </header>
+
+    <!-- Timeline: iterate years → months → posts -->
+    <div class="space-y-16">
+      <th:block th:each="archive : ${archives.items}">
+        <div>
+          <!-- Year -->
+          <h2
+            class="text-h-lg font-serif text-text mb-8 pb-2 border-b border-border"
+            th:text="${archive.year}"
+          ></h2>
+
+          <!-- Months -->
+          <div class="space-y-10">
+            <th:block th:each="monthArchive : ${archive.months}">
+              <div class="grid grid-cols-1 md:grid-cols-[100px_1fr] gap-6 md:gap-12">
+                <!-- Month label -->
+                <div>
+                  <div
+                    class="text-2xl font-serif text-primary"
+                    th:text="${#strings.toString(monthArchive.month) + ' 月'}"
+                  ></div>
+                </div>
+
+                <!-- Posts -->
+                <ul class="space-y-5 md:pt-1">
+                  <li th:each="post : ${monthArchive.posts}" class="flex items-baseline gap-4 group">
+                    <time
+                      class="text-overline tracking-wider text-text-muted flex-shrink-0 w-12"
+                      th:text="${#temporals.format(post.spec.publishTime, 'MM-dd')}"
+                    ></time>
+                    <a
+                      th:href="@{${post.status.permalink}}"
+                      class="text-body-e font-serif text-text group-hover:text-primary transition-colors flex-grow"
+                      th:text="${post.spec.title}"
+                    ></a>
+                  </li>
+                </ul>
+              </div>
+            </th:block>
+          </div>
+        </div>
+      </th:block>
+    </div>
+
+    <!-- Pagination -->
+    <nav
+      th:if="${archives.hasPrevious() or archives.hasNext()}"
+      class="flex items-center justify-center gap-4 mt-20"
+    >
+      <a
+        th:if="${archives.hasPrevious()}"
+        th:href="@{${archives.prevUrl}}"
+        class="px-5 py-2.5 border border-border rounded-xl text-text hover:bg-surface transition"
+      >← Newer</a>
+      <span
+        class="text-text-muted text-sm"
+        th:text="|${archives.page} / ${archives.totalPages}|"
+      ></span>
+      <a
+        th:if="${archives.hasNext()}"
+        th:href="@{${archives.nextUrl}}"
+        class="px-5 py-2.5 border border-border rounded-xl text-text hover:bg-surface transition"
+      >Older →</a>
+    </nav>
+  </section>
+</include>

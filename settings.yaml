@@ -1,0 +1,322 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: yema-setting
+spec:
+  forms:
+    - group: header
+      label: "顶部导航"
+      formSchema:
+        - $formkit: select
+          name: logo_type
+          id: logo_type
+          label: "Logo 类型"
+          value: text
+          options:
+            - label: "文字"
+              value: text
+            - label: "图片"
+              value: image
+        - $formkit: text
+          name: logo_text
+          label: "Logo 文字"
+          placeholder: "留空则使用站点名称"
+          if: $get(logo_type).value !== 'image'
+        - $formkit: attachment
+          name: logo_image
+          id: logo_image
+          key: logo_image
+          label: "Logo 图片"
+          if: $get(logo_type).value === 'image'
+        - $formkit: range
+          name: logo_height
+          id: logo_height
+          key: logo_height
+          label: "Logo 高度 (px)"
+          value: 40
+          min: 20
+          max: 100
+          if: $get(logo_type).value === 'image'
+
+    - group: home
+      label: "首页"
+      formSchema:
+        - $formkit: array
+          name: modules
+          label: "首页模块"
+          help: "点击每项卡片可展开编辑。可添加/删除/拖动排序。"
+          itemLabels:
+            - type: text
+              label: "$value.type"
+          value:
+            - type: featured
+              options:
+                image: ""
+                title: ""
+                subtitle: "Discover narratives that bridge the ancient magic of summer forests with the quiet hum of distant futures."
+                posts: []
+                button_text: "READ MORE"
+            - type: waterfall
+              options:
+                limit: 12
+                title: "The Library of Echoes"
+                subtitle: "Fragments of lore, gathered from the whispering woods and neon-lit terrariums."
+                random_text_colors: true
+            - type: quote
+              options:
+                text: "In every rustle of the leaves, a story waits to be told."
+          children:
+            - $formkit: select
+              name: type
+              label: "模块类型"
+              options:
+                - label: "置顶文章"
+                  value: featured
+                - label: "瀑布流"
+                  value: waterfall
+                - label: "引语"
+                  value: quote
+
+            # Featured 配置
+            - $formkit: group
+              name: options
+              key: featured-options
+              if: "$value.type === 'featured'"
+              children:
+                - $formkit: select
+                  name: layout
+                  label: "布局"
+                  value: left-right
+                  options:
+                    - label: "左右布局"
+                      value: left-right
+                    - label: "居中布局"
+                      value: center
+                - $formkit: attachment
+                  name: image
+                  id: featured_image
+                  key: featured_image
+                  label: "描述图片"
+                  help: "不设置则显示下方标题文字"
+                - $formkit: range
+                  name: image_scale
+                  label: "描述图片大小 (%)"
+                  value: 100
+                  min: 30
+                  max: 200
+                - $formkit: text
+                  name: title
+                  label: "标题"
+                  placeholder: "留空则使用站点名称"
+                - $formkit: textarea
+                  name: subtitle
+                  label: "描述"
+                - $formkit: repeater
+                  name: posts
+                  label: "文章卡片"
+                  max: 5
+                  help: "堆叠卡片依次展示，建议 1-5 篇"
+                  children:
+                    - $formkit: postSelect
+                      name: post
+                      label: "文章"
+                      validation: required
+                - $formkit: text
+                  name: button_text
+                  label: "卡片按钮文字"
+                  value: "继续阅读"
+
+            # Waterfall 配置
+            - $formkit: group
+              name: options
+              key: waterfall-options
+              if: "$value.type === 'waterfall'"
+              children:
+                - $formkit: number
+                  name: limit
+                  label: "文章数量"
+                  value: 12
+                  min: 3
+                  max: 18
+                - $formkit: text
+                  name: title
+                  label: "区块标题"
+                  value: "The Library of Echoes"
+                - $formkit: text
+                  name: subtitle
+                  label: "区块副标题"
+                - $formkit: checkbox
+                  name: image_priority
+                  label: "图片优先"
+                  value: false
+                  help: "开启后仅显示有封面的文章，且仅显示图片"
+
+            # Quote 配置
+            - $formkit: group
+              name: options
+              key: quote-options
+              if: "$value.type === 'quote'"
+              children:
+                - $formkit: text
+                  name: text
+                  label: "引语文字"
+
+    - group: archives
+      label: "归档页"
+      formSchema:
+        - $formkit: text
+          name: title
+          label: "页面标题"
+          value: "Archives"
+        - $formkit: text
+          name: subtitle
+          label: "页面副标题"
+          value: "A timeline of every tale, gathered by year."
+
+    - group: post
+      label: "文章页"
+      formSchema:
+        - $formkit: checkbox
+          name: show_cover
+          label: "显示文章封面"
+          value: true
+        - $formkit: checkbox
+          name: show_visit_count
+          label: "显示访问量"
+          value: true
+        - $formkit: checkbox
+          name: show_prev_next
+          label: "显示上一篇/下一篇导航"
+          value: true
+        - $formkit: checkbox
+          name: drop_cap_enabled
+          label: "启用首字下沉"
+          value: true
+
+    - group: footer
+      label: "页脚"
+      formSchema:
+        - $formkit: attachment
+          name: brand_image
+          label: "页脚 Logo"
+          value: ""
+          help: "不设置则使用站点名称"
+        - $formkit: range
+          name: brand_scale
+          label: "页脚 Logo 大小 (%)"
+          value: 100
+          min: 30
+          max: 200
+        - $formkit: text
+          name: slogan
+          label: "Slogan"
+          value: "Echoes from the summer forest."
+        - $formkit: code
+          name: copyright
+          label: "版权信息"
+          language: html
+          height: 80px
+          value: |
+            &copy; 2026 YeMA. All rights reserved. Powered by
+            <a href="https://www.halo.run" target="_blank" class="hover:underline">Halo</a>.
+        - $formkit: group
+          name: beian
+          label: "备案信息"
+          value:
+            show_icp: false
+            show_gongan: false
+          children:
+            - $formkit: checkbox
+              name: show_icp
+              id: footer_show_icp
+              key: footer_show_icp
+              label: "显示 ICP 备案"
+              value: false
+            - $formkit: text
+              name: icp
+              label: "ICP 备案号"
+              value: ""
+              if: "$get(footer_show_icp).value"
+              placeholder: "例如: 粤ICP备00000000号"
+            - $formkit: text
+              name: icp_link
+              label: "ICP 备案链接"
+              value: "https://beian.miit.gov.cn"
+              if: "$get(footer_show_icp).value"
+            - $formkit: checkbox
+              name: show_gongan
+              id: footer_show_gongan
+              key: footer_show_gongan
+              label: "显示公安备案"
+              value: false
+            - $formkit: text
+              name: gongan
+              label: "公安备案号"
+              value: ""
+              if: "$get(footer_show_gongan).value"
+            - $formkit: text
+              name: gongan_link
+              label: "公安备案链接"
+              value: ""
+              if: "$get(footer_show_gongan).value"
+        - $formkit: array
+          name: social_media
+          label: "社交媒体"
+          value: []
+          itemLabels:
+            - type: iconify
+              label: "$value.iconify"
+            - type: text
+              label: "$value.name"
+          children:
+            - $formkit: iconify
+              name: iconify
+              label: "图标"
+              format: svg
+            - $formkit: text
+              name: name
+              label: "名称"
+              validation: required
+            - $formkit: text
+              name: url
+              label: "链接"
+              validation: required
+            - $formkit: select
+              name: url_type
+              label: "打开方式"
+              value: normal
+              options:
+                - label: "新标签页跳转"
+                  value: normal
+                - label: "弹窗显示图片"
+                  value: image
+        - $formkit: select
+          name: menu_names
+          label: "菜单组"
+          value: []
+          multiple: true
+          sortable: true
+          action: "/api/v1alpha1/menus"
+          requestOption:
+            labelField: "spec.displayName"
+            valueField: "metadata.name"
+          help: "选择要在页脚右侧显示的菜单组（建议不超过 4 组）"
+
+    - group: advanced
+      label: "高级"
+      formSchema:
+        - $formkit: select
+          name: default_color_scheme
+          label: "默认配色"
+          value: auto
+          options:
+            - label: "跟随系统"
+              value: auto
+            - label: "浅色"
+              value: light
+            - label: "深色"
+              value: dark
+        - $formkit: checkbox
+          name: enable_color_switch
+          label: "允许访客切换配色"
+          value: true

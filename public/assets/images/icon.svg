@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <!-- Background -->
+  <rect width="64" height="64" rx="8" fill="#f5f4ed"/>
+
+  <!-- Pixel horse on a 16x16 grid (each pixel = 4 units), offset slightly center -->
+  <!-- Each <rect x y width height fill/>: x,y in pixels * 4 -->
+
+  <!-- Mane (dark brown) -->
+  <rect x="20" y="12" width="4" height="4" fill="#8b4230"/>
+  <rect x="16" y="16" width="8" height="4" fill="#8b4230"/>
+  <rect x="12" y="20" width="12" height="4" fill="#8b4230"/>
+  <rect x="12" y="24" width="12" height="4" fill="#8b4230"/>
+
+  <!-- Head & neck (terracotta) -->
+  <rect x="24" y="20" width="12" height="4" fill="#c96442"/>
+  <rect x="28" y="16" width="8" height="4" fill="#c96442"/>
+  <rect x="24" y="24" width="12" height="4" fill="#c96442"/>
+
+  <!-- Eye -->
+  <rect x="32" y="20" width="2" height="2" fill="#231916"/>
+
+  <!-- Ear highlight -->
+  <rect x="28" y="12" width="2" height="4" fill="#8b4230"/>
+
+  <!-- Body (terracotta) -->
+  <rect x="16" y="28" width="32" height="4" fill="#c96442"/>
+  <rect x="16" y="32" width="32" height="4" fill="#c96442"/>
+  <rect x="16" y="36" width="32" height="4" fill="#c96442"/>
+
+  <!-- Belly lighter (warm) -->
+  <rect x="20" y="36" width="24" height="2" fill="#d97757"/>
+
+  <!-- Tail -->
+  <rect x="48" y="28" width="4" height="4" fill="#8b4230"/>
+  <rect x="48" y="32" width="4" height="8" fill="#8b4230"/>
+
+  <!-- Front legs -->
+  <rect x="20" y="40" width="4" height="8" fill="#c96442"/>
+  <rect x="28" y="40" width="4" height="8" fill="#c96442"/>
+
+  <!-- Back legs -->
+  <rect x="36" y="40" width="4" height="8" fill="#c96442"/>
+  <rect x="44" y="40" width="4" height="8" fill="#c96442"/>
+
+  <!-- Hooves (dark) -->
+  <rect x="20" y="46" width="4" height="2" fill="#231916"/>
+  <rect x="28" y="46" width="4" height="2" fill="#231916"/>
+  <rect x="36" y="46" width="4" height="2" fill="#231916"/>
+  <rect x="44" y="46" width="4" height="2" fill="#231916"/>
+</svg>

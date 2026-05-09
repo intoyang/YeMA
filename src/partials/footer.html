@@ -1,0 +1,115 @@
+<footer class="w-full" style="background: var(--footer-bg); color: var(--footer-text);">
+  <div class="max-w-layout mx-auto px-6 py-16 flex items-center gap-10">
+
+    <!-- LEFT: Brand + copyright + beian -->
+    <div class="flex-1 flex flex-col gap-4">
+      <th:block th:if="${not #strings.isEmpty(theme.config?.footer?.brand_image)}">
+        <img
+          th:src="${theme.config.footer.brand_image}"
+          th:alt="${site.title}"
+          th:style="|width: ${theme.config.footer.brand_scale ?: 100}%|"
+          class="max-w-full h-auto"
+        />
+      </th:block>
+      <span
+        th:unless="${not #strings.isEmpty(theme.config?.footer?.brand_image)}"
+        class="font-serif italic text-2xl"
+        th:text="${site.title}"
+      ></span>
+      <p
+        th:if="${not #strings.isEmpty(theme.config?.footer?.slogan)}"
+        th:text="${theme.config.footer.slogan}"
+        class="text-sm opacity-70 font-serif"
+      ></p>
+      <div class="text-xs space-y-1 whitespace-nowrap" style="color: var(--footer-text-muted);">
+        <div
+          th:if="${not #strings.isEmpty(theme.config?.footer?.copyright)}"
+          th:utext="${theme.config.footer.copyright}"
+        ></div>
+        <div
+          th:if="${theme.config?.footer?.beian?.show_icp or theme.config?.footer?.beian?.show_gongan}"
+          class="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1"
+        >
+          <a
+            th:if="${theme.config?.footer?.beian?.show_icp and not #strings.isEmpty(theme.config.footer.beian.icp)}"
+            th:href="${theme.config.footer.beian.icp_link ?: '#'}"
+            th:text="${theme.config.footer.beian.icp}"
+            target="_blank"
+            rel="noopener"
+            class="hover:underline"
+          ></a>
+          <a
+            th:if="${theme.config?.footer?.beian?.show_gongan and not #strings.isEmpty(theme.config.footer.beian.gongan)}"
+            th:href="${theme.config.footer.beian.gongan_link ?: '#'}"
+            th:text="${theme.config.footer.beian.gongan}"
+            target="_blank"
+            rel="noopener"
+            class="hover:underline"
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Menu groups — left-aligned, right of brand, max 3 groups -->
+    <div
+      th:if="${not #lists.isEmpty(theme.config.footer.menu_names)}"
+      class="flex-1 min-w-0 flex flex-col items-center gap-2 text-sm"
+      style="color: var(--footer-text-muted);"
+    >
+      <th:block th:each="name, stat : ${theme.config.footer.menu_names}">
+        <div
+          th:if="${stat.index < 3}"
+          th:with="menu = ${menuFinder.getByName(name)}"
+          class="w-full flex flex-wrap justify-center gap-x-1"
+        >
+          <th:block th:each="item, istat : ${menu.menuItems}">
+            <span th:if="${!istat.first}" class="opacity-30">|</span>
+            <a
+              th:href="@{${item.status.href}}"
+              th:text="${item.status.displayName}"
+              class="hover:underline px-1"
+            ></a>
+          </th:block>
+        </div>
+      </th:block>
+    </div>
+
+    <!-- RIGHT: Social icons — max 6, pushed to far right -->
+    <ul
+      th:if="${not #lists.isEmpty(theme.config?.footer?.social_media)}"
+      class="flex-1 flex flex-wrap justify-end gap-2"
+    >
+      <th:block th:each="item, stat : ${theme.config.footer.social_media}">
+        <li th:if="${stat.index < 6}">
+          <a
+            th:href="${item.url_type == 'image'} ? |javascript:openSocialImage('${item.url}');| : ${item.url}"
+            th:target="${item.url_type == 'image' ? '_self' : '_blank'}"
+            rel="noreferrer"
+            class="inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/10 transition [&>svg]:size-4"
+            style="color: var(--footer-text-muted);"
+          >
+            <span class="sr-only" th:text="${item.name}"></span>
+            <th:block
+              th:if="${item.iconify != null}"
+              th:utext="${item.iconify.value}"
+            ></th:block>
+          </a>
+        </li>
+      </th:block>
+    </ul>
+
+  </div>
+</footer>
+
+<script>
+  function openSocialImage(url) {
+    var modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out';
+    var img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'max-width:90%;max-height:90%;border-radius:12px';
+    modal.appendChild(img);
+    modal.onclick = function () { document.body.removeChild(modal); };
+    document.body.appendChild(modal);
+  }
+</script>

@@ -1,0 +1,10 @@
+<section
+  th:if="${not #strings.isEmpty(options.text)}"
+  class="py-24 px-6 max-w-4xl mx-auto text-center"
+>
+  <div class="font-serif text-8xl leading-none opacity-80 mb-6" style="color: var(--primary);">"</div>
+  <h2
+    class="text-h-lg md:text-section font-serif italic text-text-muted"
+    th:text="${options.text}"
+  ></h2>
+</section>

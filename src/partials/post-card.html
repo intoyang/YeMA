@@ -1,0 +1,80 @@
+<!--
+  Post card variants: auto / cover-only(图片优先) / text-only(文字优先)
+  forceStyle overrides annotation (used by waterfall image_priority mode).
+  Warm color cycling for text-only when cardIndex is provided.
+-->
+<th:block th:with="
+  styleFromAnno = ${post.metadata.annotations != null ? post.metadata.annotations.get('theme.run/yema/card_style') : null},
+  hasCover = ${post.spec.cover != null and not #strings.isEmpty(post.spec.cover)},
+  resolvedAnno = ${(styleFromAnno == null or styleFromAnno == '' or styleFromAnno == 'auto' or styleFromAnno == 'image-text' or styleFromAnno == 'dark') ? (hasCover ? 'image-text' : 'text-only') : styleFromAnno},
+  finalStyle = ${forceStyle != null ? forceStyle : resolvedAnno},
+  colorIdx = ${cardIndex != null ? cardIndex % 3 : 0}
+">
+
+  <!-- Cover-only: pure image at original ratio -->
+  <article
+    th:if="${finalStyle == 'cover-only' and hasCover}"
+    class="reveal break-inside-avoid rounded-xl ring-1 ring-border overflow-hidden mb-6 hover:shadow-ring transition-shadow duration-300"
+  >
+    <a th:href="@{${post.status.permalink}}" class="block">
+      <img
+        th:src="${post.spec.cover}"
+        th:alt="${post.spec.title}"
+        loading="lazy"
+        class="w-full h-auto block"
+      />
+    </a>
+  </article>
+
+  <!-- Image + text variant (auto with cover) -->
+  <article
+    th:if="${finalStyle == 'image-text' and hasCover}"
+    class="reveal break-inside-avoid bg-surface rounded-xl ring-1 ring-border overflow-hidden mb-6 hover:shadow-ring transition-shadow duration-300"
+  >
+    <a th:href="@{${post.status.permalink}}" class="block">
+      <img
+        th:src="${post.spec.cover}"
+        th:alt="${post.spec.title}"
+        loading="lazy"
+        class="w-full aspect-[4/3] object-cover"
+      />
+      <div class="p-card-p">
+        <span
+          th:if="${not #lists.isEmpty(post.categories)}"
+          class="text-overline tracking-widest uppercase text-primary mb-2 block"
+          th:text="${post.categories[0].spec.displayName}"
+        ></span>
+        <h3 class="text-h-md mb-3 text-text font-serif line-clamp-3" th:text="${post.spec.title}"></h3>
+        <p class="text-body-e font-serif text-text-muted line-clamp-3" th:text="${post.status.excerpt}"></p>
+      </div>
+    </a>
+  </article>
+
+  <!-- Text-only variant — supports random warm color cycling -->
+  <article
+    th:if="${finalStyle == 'text-only'}"
+    class="reveal break-inside-avoid rounded-[18px] ring-1 ring-border overflow-hidden mb-6 hover:shadow-ring transition-shadow duration-300"
+    th:classappend="${'card-color-' + colorIdx}"
+  >
+    <a th:href="@{${post.status.permalink}}" class="block">
+      <div class="m-3 p-[20px] rounded-xl card-header">
+        <span
+          th:if="${not #lists.isEmpty(post.categories)}"
+          class="text-overline tracking-widest uppercase mb-2 block card-text-overline"
+          th:text="${post.categories[0].spec.displayName}"
+        ></span>
+        <h3
+          class="text-h-md font-serif line-clamp-3 card-text-title"
+          th:text="${post.spec.title}"
+        ></h3>
+      </div>
+      <div class="px-[24px] pt-[4px] pb-[20px] card-body">
+        <p
+          class="text-body-e font-serif line-clamp-4 card-text-excerpt"
+          th:text="${post.status.excerpt}"
+        ></p>
+      </div>
+    </a>
+  </article>
+
+</th:block>

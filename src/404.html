@@ -1,0 +1,17 @@
+<include src="layout.html">
+  <template name="head">
+    <title th:text="|404 - ${site.title}|">404</title>
+  </template>
+
+  <section class="max-w-reading mx-auto px-6 py-section-v text-center">
+    <div class="text-[120px] md:text-[200px] font-serif text-primary opacity-80 leading-none">404</div>
+    <h1 class="text-h-lg font-serif text-text mt-4">The page has wandered into the woods.</h1>
+    <p class="mt-4 text-body text-text-muted">
+      Maybe a tale was moved, or the path never existed. Let's find our way back.
+    </p>
+    <a
+      href="/"
+      class="inline-block mt-10 px-6 py-3 bg-primary text-white rounded-xl hover:opacity-90 transition"
+    >Return home</a>
+  </section>
+</include>

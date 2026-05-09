@@ -1,0 +1,34 @@
+<include src="layout.html">
+  <template name="head">
+    <title th:text="|分类 - ${site.title}|">Categories</title>
+  </template>
+
+  <section class="max-w-layout mx-auto px-6 py-section-v">
+    <header class="text-center mb-16">
+      <h1 class="text-section font-serif text-text">Categories</h1>
+      <p class="text-body text-text-muted mt-4">Browse tales by category.</p>
+    </header>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a
+        th:each="category : ${categories.items}"
+        th:href="@{${category.status.permalink}}"
+        class="group block p-8 bg-surface border border-border rounded-xl ring-1 ring-border hover:shadow-ring transition-all"
+      >
+        <h3
+          class="text-h-md font-serif text-text group-hover:text-primary transition-colors mb-2"
+          th:text="${category.spec.displayName}"
+        ></h3>
+        <p
+          th:if="${not #strings.isEmpty(category.spec.description)}"
+          class="text-body text-text-muted line-clamp-2 mb-4"
+          th:text="${category.spec.description}"
+        ></p>
+        <span
+          class="text-overline tracking-widest uppercase text-text-muted"
+          th:text="|${category.status.postCount ?: 0} posts|"
+        ></span>
+      </a>
+    </div>
+  </section>
+</include>

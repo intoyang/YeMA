@@ -1,0 +1,21 @@
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: annotation-setting-yema-post
+spec:
+  targetRef:
+    group: content.halo.run
+    kind: Post
+  formSchema:
+    - $formkit: select
+      name: card_style
+      label: "瀑布流卡片样式"
+      value: "auto"
+      help: "控制此文章在瀑布流中的呈现样式"
+      options:
+        - label: "自动"
+          value: "auto"
+        - label: "图片优先"
+          value: "cover-only"
+        - label: "文字优先"
+          value: "text-only"

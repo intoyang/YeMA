@@ -1,0 +1,42 @@
+<!--
+  Hero module. Reads from ${options.*}
+  Shows only if there's any content (image or title or subtitle).
+  If paired with a featured module, the featured module renders its own hero area.
+  This standalone hero is for when featured is disabled/missing.
+-->
+<section
+  th:if="${not #strings.isEmpty(options.image) or not #strings.isEmpty(options.title) or not #strings.isEmpty(options.subtitle)}"
+  class="py-section-v px-6 max-w-layout mx-auto text-center"
+>
+  <th:block th:if="${not #strings.isEmpty(options.image)}">
+    <img
+      th:src="${options.image}"
+      th:alt="${site.title}"
+      th:style="|width: ${options.image_scale ?: 100}%|"
+      class="max-w-full h-auto mx-auto"
+    />
+  </th:block>
+  <h1
+    th:unless="${not #strings.isEmpty(options.image)}"
+    class="text-display font-serif text-text"
+    th:text="${#strings.isEmpty(options.title) ? site.title : options.title}"
+  ></h1>
+
+  <div
+    th:if="${not #strings.isEmpty(options.subtitle) or not #strings.isEmpty(options.subtitle_image)}"
+    class="mt-6 flex items-center gap-4 justify-center"
+  >
+    <img
+      th:if="${not #strings.isEmpty(options.subtitle_image)}"
+      th:src="${options.subtitle_image}"
+      alt=""
+      th:style="|width: ${options.subtitle_image_scale ?: 100}px|"
+      class="flex-shrink-0 h-auto"
+    />
+    <p
+      th:if="${not #strings.isEmpty(options.subtitle)}"
+      class="text-body-lg text-text-muted max-w-2xl"
+      th:text="${options.subtitle}"
+    ></p>
+  </div>
+</section>

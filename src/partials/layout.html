@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Prevent FOUC: apply dark class before CSS loads -->
+  <script th:inline="javascript">
+    (function () {
+      var DEFAULT = /*[[${theme.config?.advanced?.default_color_scheme} ?: 'auto']]*/ 'auto';
+      document.documentElement.dataset.defaultScheme = DEFAULT;
+      var saved = localStorage.getItem('yema-theme');
+      var scheme = saved || DEFAULT;
+      var shouldDark = scheme === 'dark' ||
+        (scheme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (shouldDark) document.documentElement.classList.add('dark');
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=LXGW+WenKai:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet"
+  />
+
+  <script type="module" src="./js/main.ts"></script>
+
+  <slot name="head"></slot>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <include src="./header.html" />
+
+  <main class="flex-grow">
+    <slot></slot>
+  </main>
+
+  <include src="./footer.html" />
+
+  <halo:footer />
+</body>
+</html>

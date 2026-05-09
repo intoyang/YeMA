@@ -1,0 +1,37 @@
+<!--
+  Waterfall module. Reads from ${options.*}
+-->
+<section
+  th:with="limit = ${options.limit ?: 12}"
+  class="bg-black/[0.02] dark:bg-white/[0.03] py-section-v"
+>
+  <div class="max-w-layout mx-auto px-6">
+    <div
+      th:if="${not #strings.isEmpty(options.title) or not #strings.isEmpty(options.subtitle)}"
+      class="text-center mb-16"
+    >
+      <h2
+        th:if="${not #strings.isEmpty(options.title)}"
+        class="text-section font-serif text-text"
+        th:text="${options.title}"
+      ></h2>
+      <p
+        th:if="${not #strings.isEmpty(options.subtitle)}"
+        class="text-body text-text-muted mt-4 max-w-2xl mx-auto"
+        th:text="${options.subtitle}"
+      ></p>
+    </div>
+
+    <div
+      th:with="posts = ${postFinder.list(1, limit)}"
+      class="columns-1 md:columns-2 lg:columns-3 gap-6"
+    >
+      <th:block th:each="post, iterStat : ${posts.items}"
+        th:with="cardIndex = ${iterStat.index}, forceStyle = ${options.image_priority ? 'cover-only' : null}">
+        <th:block th:if="${not options.image_priority or (post.spec.cover != null and not #strings.isEmpty(post.spec.cover))}">
+          <include src="post-card.html" />
+        </th:block>
+      </th:block>
+    </div>
+  </div>
+</section>
